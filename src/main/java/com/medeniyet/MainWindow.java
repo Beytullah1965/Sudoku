@@ -4,8 +4,12 @@ import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
+import java.awt.event.*;
 
-public class MainWindow extends JFrame{
+public class MainWindow extends JFrame implements ActionListener{
+
+    private JButton logButton;
+    private JTextField nameBox;
 
     MainWindow(){
 
@@ -32,12 +36,15 @@ public class MainWindow extends JFrame{
         nameBox.setBorder(border);
         nameBox.setFont(new Font("Arial",Font.PLAIN,17));
         nameBox.setHorizontalAlignment(SwingConstants.CENTER);
+        this.nameBox = nameBox;
 
         //Giriş butonu
         JButton logButton = new JButton("Giriş");
         logButton.setAlignmentX(Component.CENTER_ALIGNMENT);
         logButton.setBorder(border);
         logButton.setFont(new Font("Arial",Font.PLAIN,18));
+        logButton.addActionListener(this);
+        this.logButton = logButton;
 
 
         this.add(Box.createVerticalGlue());
@@ -58,6 +65,29 @@ public class MainWindow extends JFrame{
     public void display(){
 
         this.setVisible(true);
+
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e){
+
+        if(e.getSource() == this.logButton){
+
+            String name = this.nameBox.getText();
+
+            if(name != "" && name.length() > 2){
+
+                MenuWindow pencere2 = new MenuWindow(name);
+                pencere2.display();
+                this.setVisible(false);
+
+            }else{
+
+                JOptionPane.showMessageDialog(null,"Geçerli bir isim giriniz","",JOptionPane.WARNING_MESSAGE);
+            }
+
+        }
+
 
     }
 
