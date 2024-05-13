@@ -75,11 +75,11 @@ public class MainWindow extends JFrame implements ActionListener{
 
             String name = this.nameBox.getText();
 
-            if(name != "" && name.length() > 2){
+            if(!name.isEmpty()){
 
                 MenuWindow pencere2 = new MenuWindow(name);
                 pencere2.display();
-                this.setVisible(false);
+                this.dispose();
 
             }else{
 
