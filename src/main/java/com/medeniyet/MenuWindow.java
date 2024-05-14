@@ -47,6 +47,7 @@ public class MenuWindow extends JFrame implements ActionListener {
         easyButton.setBorder(border);
         easyButton.setFont(new Font("Arial",Font.PLAIN,18));
 
+        easyButton.addActionListener(this);
         this.easyButton = easyButton;
 
         //Orta button
@@ -55,6 +56,7 @@ public class MenuWindow extends JFrame implements ActionListener {
         mediumButton.setBorder(border);
         mediumButton.setFont(new Font("Arial",Font.PLAIN,18));
 
+        mediumButton.addActionListener(this);
         this.mediumButton = mediumButton;
 
         //Zor button
@@ -63,6 +65,7 @@ public class MenuWindow extends JFrame implements ActionListener {
         hardButton.setBorder(border);
         hardButton.setFont(new Font("Arial",Font.PLAIN,18));
 
+        hardButton.addActionListener(this);
         this.hardButton = hardButton;
 
         //Geri donmek
@@ -101,8 +104,25 @@ public class MenuWindow extends JFrame implements ActionListener {
             pencere.display();
             this.dispose();
             
-        }
+        } else if (e.getSource() == this.easyButton) {
 
+            GameWindow pencere = new GameWindow(this,1);
+            pencere.display();
+            this.setVisible(false);
+
+        }else if (e.getSource() == this.mediumButton) {
+
+            GameWindow pencere = new GameWindow(this,2);
+            pencere.display();
+            this.setVisible(false);
+
+        }else if (e.getSource() == this.hardButton) {
+
+            GameWindow pencere = new GameWindow(this,3);
+            pencere.display();
+            this.setVisible(false);
+
+        }
 
 
     }
