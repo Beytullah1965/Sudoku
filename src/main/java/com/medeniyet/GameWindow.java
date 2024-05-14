@@ -27,10 +27,12 @@ public class GameWindow extends JFrame implements ActionListener {
         this.menuWindow = previousWindow;
 
 
-        this.setLayout(new MigLayout("wrap,fill,insets 20 20 20 20","[][][][][]","[][][][][][][]"));
+        this.setLayout(new MigLayout("wrap,fill,insets 20 20 20 20",
+                "[][][][][]",
+                "[][][][][][]push[]"));
 
         JLabel title = new JLabel(getLevel(level)+" seviye");
-        title.setFont(new Font("Arial", Font.PLAIN, 27));
+        title.setFont(new Font("Arial", Font.BOLD, 27));
         title.setAlignmentX(Component.LEFT_ALIGNMENT);
 
         JPanel sudoku = new JPanel(new MigLayout("wrap,insets 0, gapx 5, gapy 5",
@@ -62,31 +64,33 @@ public class GameWindow extends JFrame implements ActionListener {
         }
 
 
-        //Top-left area
+        //Top-right area
 
-        JPanel subPanel = new JPanel(new MigLayout("wrap, insets 30 10 30 10 ,fill",
+        JPanel subPanel = new JPanel(new MigLayout("wrap, insets 0 ,fill ",
                 "[][][]",
-                "[][]"));
+                "[][][]"));
 
         ImageIcon eraser = new ImageIcon("images/silgi.png");
         Image scaledImage = eraser.getImage().getScaledInstance(30, 30, Image.SCALE_SMOOTH);
         eraser = new ImageIcon(scaledImage);
         JButton eraseButton = new JButton(eraser);
+        eraseButton.setBackground(new Color(164,194,212));
 
         JLabel mistakeCount = new JLabel("Hatalar 0/3");
-        mistakeCount.setFont(new Font("Arial", Font.PLAIN, 21));
+        mistakeCount.setFont(new Font("Arial", Font.PLAIN, 22));
         mistakeCount.setAlignmentX(Component.LEFT_ALIGNMENT);
 
         JLabel timeCount = new JLabel("5:00");
-        timeCount.setFont(new Font("Arial", Font.PLAIN, 21));
+        timeCount.setFont(new Font("Arial", Font.PLAIN, 22));
         timeCount.setAlignmentX(Component.LEFT_ALIGNMENT);
 
+        subPanel.add(title,"span 3 0,gapbottom 20px,gaptop 30px");
         subPanel.add(eraseButton,"span 1 2, width 55!,height 55!,align center");
         subPanel.add(mistakeCount, "span 2 1");
         subPanel.add(timeCount,"span 2 1");
 
         //Numbers keyboard
-        JPanel keyboard = new JPanel(new MigLayout("wrap,insets 0, gapx 10, gapy 10",
+        JPanel keyboard = new JPanel(new MigLayout("wrap,insets 0, gapx 7, gapy 7",
                 "[][][]",
                 "[][][]"));
 
@@ -110,15 +114,17 @@ public class GameWindow extends JFrame implements ActionListener {
         Border border = BorderFactory.createCompoundBorder(backButton.getBorder(),padding);
         backButton.setBorder(border);
         backButton.setFont(new Font("Arial",Font.PLAIN,14));
+        backButton.setBackground(new Color(17,33,59));
+        backButton.setForeground(Color.WHITE);
+
         backButton.addActionListener(this);
         this.backButton = backButton;
 
                 //column row width height
-        this.add(title,"cell 0 0 3 1,gapleft 30px");
-        this.add(subPanel,"growx,height 120::,cell 3 0 2 2");
+        this.add(subPanel,"growx,height 120::,cell 3 0 2 3");
         this.add(sudoku,"width 460px,height 460px,cell 0 1 3 6, align center");
-        this.add(keyboard,"width 250!,height 250!,cell 3 2 2 4, align center");
-        this.add(backButton,"align right,cell 3 6 2 1,gapright 20px");
+        this.add(keyboard,"width 220!,height 220!,cell 3 3 2 3, align center,gaptop 35px, gapright 35px");
+        this.add(backButton,"align right,cell 3 6 2 1,gapright 20px,gapbottom 20px");
 
 
 
