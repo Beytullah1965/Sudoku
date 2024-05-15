@@ -1,7 +1,10 @@
 package com.medeniyet;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import net.miginfocom.swing.MigLayout;
 
+import javax.net.ssl.HttpsURLConnection;
 import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
@@ -9,16 +12,30 @@ import javax.swing.text.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
+import java.lang.reflect.Array;
+import java.lang.reflect.Type;
+import java.net.URI;
+import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Scanner;
+
 
 public class GameWindow extends JFrame implements ActionListener {
 
     JButton backButton;
     MenuWindow menuWindow;
+    Map<String,Object> sudokuData;
+    String difficulty;
+    int[] sudokuArray = new int[81];
 
     GameWindow(MenuWindow previousWindow,int level){
 
         super();
+        getLevel(level);
+        getSudoku();
         this.setTitle("Medeniyet Sudoku");
         this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         this.setSize(900,600);
@@ -35,6 +52,8 @@ public class GameWindow extends JFrame implements ActionListener {
         title.setFont(new Font("Arial", Font.BOLD, 27));
         title.setAlignmentX(Component.LEFT_ALIGNMENT);
 
+        //Sudoku grid
+
         JPanel sudoku = new JPanel(new MigLayout("wrap,insets 0, gapx 5, gapy 5",
                 "[][][]",
                 "[][][]"));
@@ -43,6 +62,8 @@ public class GameWindow extends JFrame implements ActionListener {
 
         // Set the black border for the panel
         sudoku.setBorder(blackBorder);
+
+        int k = 0;
 
         for (int i = 0;i<9;i++){
 
@@ -56,8 +77,11 @@ public class GameWindow extends JFrame implements ActionListener {
             for (int j = 0; j<9; j++){
 
                 Cell celda = new Cell();
-
+                celda.setValue(this.sudokuArray[k]);
+                k++;
                 sector.add(celda,"grow, push");
+
+
 
             }
 
@@ -126,18 +150,118 @@ public class GameWindow extends JFrame implements ActionListener {
         this.add(keyboard,"width 220!,height 220!,cell 3 3 2 3, align center,gaptop 35px, gapright 35px");
         this.add(backButton,"align right,cell 3 6 2 1,gapright 20px,gapbottom 20px");
 
+    }
 
+    //GET request to Dosuku API
+
+    private void getSudoku() {
+
+        try {
+            URI uri = URI.create("https://sudoku-api.vercel.app/api/dosuku");
+            URL url = uri.toURL();
+            HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
+            connection.setRequestMethod("GET");
+
+            int responseCode = connection.getResponseCode();
+
+            if(responseCode == HttpsURLConnection.HTTP_OK){
+
+                Scanner input = new Scanner(connection.getInputStream());
+                StringBuilder builder = new StringBuilder();
+
+                while (input.hasNext()){
+
+                    builder.append(input.nextLine());
+
+                }
+
+                Gson gson = new Gson();
+
+                Map<String,Object> data = gson.fromJson(builder.toString(), Map.class);
+
+                Map<String,Object> data2 = (Map<String, Object>) data.get("newboard");
+
+                ArrayList<Object> array = (ArrayList<Object>) data2.get("grids");
+
+                Map<String,Object> sudokuData = (Map<String, Object>) array.getFirst();
+
+                System.out.println(sudokuData.get("difficulty"));
+
+                if (!sudokuData.get("difficulty").equals(this.difficulty)){
+
+                    getSudoku();
+
+                }else{
+
+                    this.sudokuData = sudokuData;
+                    getSudokuArray();
+
+                }
+
+            }else {
+
+                throw new IOException("The request was not successful");
+
+            }
+
+        }catch (IOException e){
+
+            System.out.println("There was an error while requesting a new sudoku from the API");
+
+        }
 
     }
 
     public String getLevel(int level){
 
-        return switch (level) {
-            case 2 -> "Orta";
-            case 3 -> "Zor";
-            default -> "Kolay";
-        };
+        switch (level) {
+            case 2:
 
+                this.difficulty = "Medium";
+                return "Orta";
+            case 3:
+                this.difficulty = "Hard";
+                return "Zor";
+
+            default:
+                this.difficulty = "Easy";
+                return "Kolay";
+
+        }
+
+
+    }
+
+    private void getSudokuArray(){
+
+        //Gson interprets every array inside the json string as ArrayList and every number as Double
+        //This code is needed to obtain a normal int[][] matrix to work with
+
+        // Define the type of array you want to deserialize into
+        //There is another class called Type in the dependencies so its necessary to specify
+        java.lang.reflect.Type arrayType = new TypeToken<int[][]>(){}.getType();
+
+        // Convert ArrayList to JSON string
+        Gson gson = new Gson();
+        String json = gson.toJson(this.sudokuData.get("value"));
+
+        // Deserialize JSON string into a Java multidimensional array
+        int[][] originalArray = gson.fromJson(json, arrayType);
+
+        int [] fullArray = new int[81];
+        int k = 0;
+
+        for(int i=0; i<9;i++){
+
+            for (int j=0; j<9; j++){
+
+                fullArray[k] = originalArray[i][j];
+                k++;
+            }
+
+        }
+
+        this.sudokuArray = fullArray;
 
     }
 
@@ -177,6 +301,8 @@ class Cell extends JTextField{
         this.setHorizontalAlignment(JTextField.CENTER);
         this.setAlignmentY(JTextField.CENTER);
         this.setBorder(null);
+        this.setPreferredSize(new Dimension(60,60));
+        this.setFont(new Font("Arial",Font.BOLD,16));
 
     }
 
