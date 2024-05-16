@@ -8,6 +8,8 @@ import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.DocumentFilter;
 import java.awt.*;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.util.ArrayList;
 
 public class Cell extends JTextField {
@@ -28,6 +30,17 @@ public class Cell extends JTextField {
         this.setPreferredSize(new Dimension(60,60));
         this.setFont(new Font("Arial",Font.BOLD,16));
         this.window = window;
+        this.addFocusListener(new FocusListener() {
+            @Override
+            public void focusGained(FocusEvent e) {
+                window.focusedCell = Cell.this;
+            }
+
+            @Override
+            public void focusLost(FocusEvent e) {
+                //There is no need to take an action
+            }
+        });
 
     }
 
@@ -36,10 +49,16 @@ public class Cell extends JTextField {
         AbstractDocument document = (AbstractDocument) this.getDocument();
 
         document.setDocumentFilter(new DocumentFilter() {
+
+            boolean isValid(String string){
+
+                return  string.matches("[1-9]") || string.isEmpty();
+            }
+
             @Override
             public void insertString(FilterBypass fb, int offset, String string, AttributeSet attr)
                     throws BadLocationException {
-                if (string.matches("[1-9]") && (fb.getDocument().getLength() == 0 || offset == 0)) {
+                if ((fb.getDocument().getLength() == 0 && isValid(string)) || (offset == 0 && isValid(string))) {
                     super.insertString(fb, offset, string, attr);
                 }
             }
@@ -47,7 +66,7 @@ public class Cell extends JTextField {
             @Override
             public void replace(FilterBypass fb, int offset, int length, String text, AttributeSet attrs)
                     throws BadLocationException {
-                if (offset == 0 && text.matches("[1-9]")) {
+                if (offset == 0 && isValid(text) && !text.equals(fb.getDocument().getText(0,fb.getDocument().getLength()))) {
                     super.replace(fb, offset, length, text, attrs);
                 }
             }

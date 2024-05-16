@@ -9,6 +9,8 @@ import javax.swing.text.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.util.ArrayList;
 
 
@@ -22,6 +24,9 @@ public class GameWindow extends JFrame implements ActionListener {
     int mistakes = 0;
     JLabel mistakeLabel;
     JLabel timeLabel;
+    Cell focusedCell;
+    JButton eraseButton;
+    Timer timer;
 
     GameWindow(MenuWindow previousWindow,int level){
 
@@ -113,6 +118,8 @@ public class GameWindow extends JFrame implements ActionListener {
         JButton eraseButton = new JButton(eraser);
         eraseButton.setBackground(new Color(164,194,212));
         eraseButton.setFocusable(false);
+        eraseButton.addActionListener(this);
+        this.eraseButton = eraseButton;
 
         JLabel mistakeCount = new JLabel("Hatalar 0/3");
         mistakeCount.setFont(new Font("Arial", Font.PLAIN, 22));
@@ -142,6 +149,7 @@ public class GameWindow extends JFrame implements ActionListener {
             numberButton.setForeground(Color.WHITE);
             numberButton.setFont(new Font("Arial",Font.BOLD,16));
             numberButton.setFocusable(false);
+            numberButton.addActionListener(this);
             keyboard.add(numberButton,"grow, push, align center");
 
         }
@@ -237,6 +245,7 @@ public class GameWindow extends JFrame implements ActionListener {
             public void run() {
 
                 menuWindow.display();
+                GameWindow.this.timer.stop();
                 GameWindow.this.dispose();
 
             }
@@ -258,7 +267,7 @@ public class GameWindow extends JFrame implements ActionListener {
 
             case "Medium":
 
-                return 10;
+                return 1;
 
 
             case "Hard":
@@ -305,6 +314,7 @@ public class GameWindow extends JFrame implements ActionListener {
         });
 
         timer.start();
+        this.timer = timer;
 
     }
 
@@ -314,10 +324,21 @@ public class GameWindow extends JFrame implements ActionListener {
         if(e.getSource() == this.backButton){
 
             menuWindow.display();
+            this.timer.stop();
             this.dispose();
 
-        }
+        }else if (e.getSource() == this.eraseButton){
 
+            this.focusedCell.setText("");
+
+
+        }else{
+
+            JButton button = (JButton) e.getSource();
+
+            this.focusedCell.setText(button.getText());
+
+        }
 
 
     }
