@@ -19,6 +19,9 @@ public class GameWindow extends JFrame implements ActionListener {
     String difficulty;
     int[] sudokuArray = new int[81];
     ArrayList<Cell> cells = new ArrayList<Cell>();
+    int mistakes = 0;
+    JLabel mistakeLabel;
+    JLabel timeLabel;
 
     GameWindow(MenuWindow previousWindow,int level){
 
@@ -68,7 +71,7 @@ public class GameWindow extends JFrame implements ActionListener {
 
         while(counter<81){
 
-            Cell cellObj = new Cell();
+            Cell cellObj = new Cell(this);
             cells.add(cellObj);
 
             sectors.get(xsectorCounter +(ySectorCounter*3) ).add(cellObj,"grow, push");
@@ -109,14 +112,17 @@ public class GameWindow extends JFrame implements ActionListener {
         eraser = new ImageIcon(scaledImage);
         JButton eraseButton = new JButton(eraser);
         eraseButton.setBackground(new Color(164,194,212));
+        eraseButton.setFocusable(false);
 
         JLabel mistakeCount = new JLabel("Hatalar 0/3");
         mistakeCount.setFont(new Font("Arial", Font.PLAIN, 22));
         mistakeCount.setAlignmentX(Component.LEFT_ALIGNMENT);
+        this.mistakeLabel = mistakeCount;
 
-        JLabel timeCount = new JLabel("5:00");
+        JLabel timeCount = new JLabel(String.valueOf(this.getTimeLimit())+":00");
         timeCount.setFont(new Font("Arial", Font.PLAIN, 22));
         timeCount.setAlignmentX(Component.LEFT_ALIGNMENT);
+        this.timeLabel = timeCount;
 
         subPanel.add(title,"span 3 0,gapbottom 20px,gaptop 30px");
         subPanel.add(eraseButton,"span 1 2, width 55!,height 55!,align center");
@@ -135,6 +141,7 @@ public class GameWindow extends JFrame implements ActionListener {
             numberButton.setBackground(new Color(34,34,34));
             numberButton.setForeground(Color.WHITE);
             numberButton.setFont(new Font("Arial",Font.BOLD,16));
+            numberButton.setFocusable(false);
             keyboard.add(numberButton,"grow, push, align center");
 
         }
@@ -150,6 +157,7 @@ public class GameWindow extends JFrame implements ActionListener {
         backButton.setFont(new Font("Arial",Font.PLAIN,14));
         backButton.setBackground(new Color(17,33,59));
         backButton.setForeground(Color.WHITE);
+        backButton.setFocusable(false);
 
         backButton.addActionListener(this);
         this.backButton = backButton;
@@ -204,6 +212,99 @@ public class GameWindow extends JFrame implements ActionListener {
             }
 
         }
+
+    }
+
+    public void addMistake(){
+
+        this.mistakes++;
+        this.mistakeLabel.setText("Hatalar "+this.mistakes+"/3");
+
+        if (this.mistakes > 3){
+
+            this.gameOver("Hata sınırını aştınız");
+
+        }
+
+
+    }
+
+    public void gameOver(String reason) {
+
+        CustomDialog dialog = new CustomDialog(this, reason, "Tamam", new MyCallback() {
+
+            @Override
+            public void run() {
+
+                menuWindow.display();
+                GameWindow.this.dispose();
+
+            }
+
+
+        });
+
+        dialog.setVisible(true);
+
+    }
+
+    public int getTimeLimit(){
+
+        switch(this.difficulty){
+
+            case "Easy":
+
+                return 12;
+
+            case "Medium":
+
+                return 10;
+
+
+            case "Hard":
+
+                return 8;
+
+
+            default:
+                return 10;
+        }
+
+    }
+
+    public void startTimer(int minutes){
+
+        Timer timer = new Timer(1000,new ActionListener(){
+
+            int remainingSeconds = minutes*60;
+
+        @Override
+            public void actionPerformed(ActionEvent e){
+
+            remainingSeconds--;
+
+            String min = String.valueOf(remainingSeconds/60);
+            String sec = String.valueOf(remainingSeconds%60);
+
+            if (sec.length() < 2){
+
+                sec = "0"+sec;
+
+            }
+
+            GameWindow.this.timeLabel.setText(min+":"+sec);
+
+            if (remainingSeconds == 0){
+
+                GameWindow.this.gameOver("Süre doldu");
+
+            }
+
+        }
+
+        });
+
+        timer.start();
 
     }
 

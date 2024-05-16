@@ -49,9 +49,11 @@ public class SudokuFetcher extends SwingWorker<Void,Void> {
             window.cells.get(i).setCorrectValue(this.solutionArray[i]);
             window.cells.get(i).listen();
 
+
         }
 
         window.checkSudoku(this.solutionArray);
+        window.startTimer(window.getTimeLimit());
 
     }
 

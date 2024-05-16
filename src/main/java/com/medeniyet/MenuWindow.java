@@ -46,6 +46,7 @@ public class MenuWindow extends JFrame implements ActionListener {
         Border border = BorderFactory.createCompoundBorder(easyButton.getBorder(),padding);
         easyButton.setBorder(border);
         easyButton.setFont(new Font("Arial",Font.PLAIN,18));
+        easyButton.setFocusable(false);
 
         easyButton.addActionListener(this);
         this.easyButton = easyButton;
@@ -55,6 +56,7 @@ public class MenuWindow extends JFrame implements ActionListener {
         mediumButton.setAlignmentX(Component.CENTER_ALIGNMENT);
         mediumButton.setBorder(border);
         mediumButton.setFont(new Font("Arial",Font.PLAIN,18));
+        mediumButton.setFocusable(false);
 
         mediumButton.addActionListener(this);
         this.mediumButton = mediumButton;
@@ -64,6 +66,7 @@ public class MenuWindow extends JFrame implements ActionListener {
         hardButton.setAlignmentX(Component.CENTER_ALIGNMENT);
         hardButton.setBorder(border);
         hardButton.setFont(new Font("Arial",Font.PLAIN,18));
+        hardButton.setFocusable(false);
 
         hardButton.addActionListener(this);
         this.hardButton = hardButton;
@@ -73,6 +76,7 @@ public class MenuWindow extends JFrame implements ActionListener {
         backButton.setAlignmentX(Component.RIGHT_ALIGNMENT);
         backButton.setBorder(border);
         backButton.setFont(new Font("Arial",Font.PLAIN,14));
+        backButton.setFocusable(false);
 
         backButton.addActionListener(this);
         this.backButton = backButton;

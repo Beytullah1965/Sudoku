@@ -16,8 +16,9 @@ public class Cell extends JTextField {
     ArrayList<Cell> row;
     ArrayList<Cell> box;
     private int correctValue;
+    GameWindow window;
 
-    Cell(){
+    Cell(GameWindow window){
 
         super();
         this.setInputValidation();
@@ -26,6 +27,7 @@ public class Cell extends JTextField {
         this.setBorder(null);
         this.setPreferredSize(new Dimension(60,60));
         this.setFont(new Font("Arial",Font.BOLD,16));
+        this.window = window;
 
     }
 
@@ -97,10 +99,15 @@ public class Cell extends JTextField {
 
             this.blockCell();
 
+        }else if(!this.getText().isEmpty()){
+
+            this.window.addMistake();
+
         }
 
     }
 
+    //Listens to any change that happens in a cell
     public void listen(){
 
         this.getDocument().addDocumentListener(new DocumentListener() {

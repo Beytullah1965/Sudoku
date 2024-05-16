@@ -44,6 +44,7 @@ public class MainWindow extends JFrame implements ActionListener{
         logButton.setBorder(border);
         logButton.setFont(new Font("Arial",Font.PLAIN,18));
         logButton.addActionListener(this);
+        logButton.setFocusable(false);
         this.logButton = logButton;
 
 
@@ -83,7 +84,17 @@ public class MainWindow extends JFrame implements ActionListener{
 
             }else{
 
-                JOptionPane.showMessageDialog(null,"Geçerli bir isim giriniz","",JOptionPane.WARNING_MESSAGE);
+                CustomDialog dialog = new CustomDialog(this,"Geçerli bir isim giriniz","Tamam",new MyCallback(){
+
+                    @Override
+                    public void run(){
+
+                    }
+
+
+                });
+
+                dialog.setVisible(true);
             }
 
         }
