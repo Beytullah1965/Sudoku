@@ -20,6 +20,7 @@ public class GameWindow extends JFrame implements ActionListener {
     MenuWindow menuWindow;
     String difficulty;
     int[] sudokuArray = new int[81];
+    int[] solutionArray = new int[81];
     ArrayList<Cell> cells = new ArrayList<Cell>();
     int mistakes = 0;
     JLabel mistakeLabel;
@@ -211,13 +212,36 @@ public class GameWindow extends JFrame implements ActionListener {
 
     public void checkSudoku(int[] solution){
 
+        int correct = 0;
+
         for (int i = 0; i < 81; i++) {
 
             if(this.cells.get(i).getValue() == solution[i]){
 
                 this.cells.get(i).blockCell();
+                correct++;
 
             }
+
+        }
+
+        if (correct == 81){
+
+            CustomDialog dialog = new CustomDialog(this,"Kazandınız", "Tamam", new MyCallback() {
+
+                @Override
+                public void run() {
+
+                    menuWindow.display();
+                    GameWindow.this.timer.stop();
+                    GameWindow.this.dispose();
+
+                }
+
+
+            });
+
+            dialog.setVisible(true);
 
         }
 
@@ -267,7 +291,7 @@ public class GameWindow extends JFrame implements ActionListener {
 
             case "Medium":
 
-                return 1;
+                return 10;
 
 
             case "Hard":
@@ -339,7 +363,6 @@ public class GameWindow extends JFrame implements ActionListener {
             this.focusedCell.setText(button.getText());
 
         }
-
 
     }
 

@@ -117,6 +117,7 @@ public class Cell extends JTextField {
         if (this.getValue() == this.correctValue){
 
             this.blockCell();
+            this.window.checkSudoku(window.solutionArray);
 
         }else if(!this.getText().isEmpty()){
 

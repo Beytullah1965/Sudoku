@@ -53,6 +53,7 @@ public class SudokuFetcher extends SwingWorker<Void,Void> {
         }
 
         window.checkSudoku(this.solutionArray);
+        window.solutionArray = this.solutionArray;
         window.startTimer(window.getTimeLimit());
 
     }
